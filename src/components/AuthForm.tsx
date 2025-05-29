@@ -8,9 +8,11 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-
+import { toast } from "sonner";
+import { loginAction } from "@/actions/users";
+import { signUpAction } from "@/actions/users";
 type Props = {
-  type: "login" | "register";
+  type: "login" | "Sign Up";
 };
 
 function AuthForm({ type }: Props) {
@@ -18,8 +20,38 @@ function AuthForm({ type }: Props) {
   const router = useRouter();
 
   const[isPending, startTransition] = useTransition();
+  // useTransition helps in prioritizing significant and insignificant UI processes and helps in performing the most crucial ones ,
+  // without breaking the UI 
   const handleSubmit = (formData: FormData) => {
     console.log("Form submitted");
+
+    startTransition(async() =>{
+      const email = formData.get("email") as string; 
+      const password = formData.get("password") as string;
+       let errorMessage;
+       let title;
+       let description; 
+
+       if(isLoginForm){
+        errorMessage = (await loginAction(email,password)).errorMessage;
+        title = "Logged In";
+        description = "You have been logged in";
+       }
+       else{
+        errorMessage = (await signUpAction(email,password)).errorMessage;
+        title = "Signed Up";
+        description = "Check Email for conformation link";
+       }
+       if(!errorMessage){
+        toast(title);
+        toast(description);
+        router.replace("/");
+       }
+       else{
+        toast(title);
+        toast(errorMessage);
+       }
+      });
   };
   return (
     <form action={handleSubmit}>

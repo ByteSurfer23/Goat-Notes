@@ -5,8 +5,9 @@ import { shadow } from "@/app/utils";
 import { Button } from "./ui/button";
 import DarkModeToggle from "./DarkModeToggle";
 import LogoutButton from "./LogoutButton";
-const Header = () => {
-    const user = 1;
+import { getUser } from "@/auth/supabase/server";
+const Header = async() => {
+    const user = await getUser();
   return (
     <header className="relative flex w-full items-end justify-between bg-popover px-3 sm:px-8 py-3 sm:py-4"
     style={{
