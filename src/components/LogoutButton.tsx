@@ -14,7 +14,7 @@ const LogoutButton = () => {
           setLoading(true);
 
           await new Promise((resolve) => setTimeout(resolve, 2000));
-
+          
           const error = null ; 
 
           if(!error){
