@@ -1,6 +1,7 @@
 "use server"
 import { handleError } from "@/lib/utils";
 import { createClient } from "@/auth/supabase/server"
+import { prisma } from "@/db/prisma";
 
 export const loginAction = async (email : string , password :string) =>{
     try{
@@ -23,7 +24,6 @@ export const signUpAction = async (email : string , password :string) =>{
     try{
         console.log("signupreached");
         const {auth} = await createClient();
-         console.log(auth);
         
         const {data , error} = await auth.signUp({
             email , 
@@ -35,6 +35,14 @@ export const signUpAction = async (email : string , password :string) =>{
         if(!userId){
             throw new Error("Error Signing Up");
         }
+
+        await prisma.user.create({
+            data:{
+                id:userId , 
+                email, 
+            }
+        })
+
         return { errorMessage : null};
     }
     catch(error){
